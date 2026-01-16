@@ -1,7 +1,8 @@
 # Documentar o credentials.yml
 
+# Altere no credentials.yml e também no docker-compose.yml
 postgres:
-  host: postgres
+  host: localhost
   port: 5432
   dbname: thelook_db
   user: admin

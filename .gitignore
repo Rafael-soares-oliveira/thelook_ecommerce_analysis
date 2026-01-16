@@ -163,3 +163,7 @@ mlruns/*
 
 # ruff cache
 .ruff_cache
+
+# logs
+logs/*
+!logs/.gitkeep

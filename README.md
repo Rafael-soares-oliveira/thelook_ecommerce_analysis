@@ -33,25 +33,24 @@ O sistema segue o padrão **Lakehouse** com enriquecimento semântico:
 
 ``` plaintext
 thelook_ecommerce_analysis/
-├── .github/                        # Workflows de CI/CD
+├── .github/                              # Workflows de CI/CD
 ├── conf/
 │   └── base/
-│   │   ├── catalog.yml             # Definição de DataSets
-│   │   ├── logging.yml             # Configuração de Logs
-│   │   └── parameters.yml          # Hiperparâmetros (Prompts, Model Names)
+│   │   ├── catalog.yml                   # Definição de DataSets
+│   │   ├── logging.yml                   # Configuração de Logs
+│   │   └── parameters.yml                # Hiperparâmetros (Prompts, Model Names)
 │   │   
 │   └── local/
-│       └── credentials.yml         # Credenciais. Ignorado no Git
+│       └── credentials.yml               # Credenciais. Ignorado no Git
 │
-├── data/                           # Ignorado no Git (apenas estrutura)
+├── data/                                 # Ignorado no Git (apenas estrutura)
 │   ├── 01_raw/
 │   ├── 02_intermediate/
 │   ├── 03_primary/
 │   └── 04_feature/
 │
-├── docs/                           # Documentação adicional (arquitetura, diagramas)
-├── notebooks/                      # Jupyter Notebooks para exploração
-├── src/                            # Código Fonte do Kedro
+├── notebooks/                            # Jupyter Notebooks para exploração
+├── src/                                  # Código Fonte do Kedro
 │   └── thelook_ecommerce_analysis/
 │       ├── pipelines/
 │       │   ├── data_ingestion/
@@ -61,22 +60,27 @@ thelook_ecommerce_analysis/
 │       ├── settings.py
 │       └── __init__.py
 │
-├── tests/                          # Testes Automatizados
-│   └── pipelines/                  # Testes dos pipelines, dividir em pastas
-│       ├── __init__.py
-│       ├── test_nodes.py
-│       └── test_pipelines.py
+├── tests/                                # Testes Automatizados
+│   ├── pipelines/                        # Testes dos pipelines, dividir em pastas
+│   │   ├── __init__.py
+│   │   ├── test_nodes.py
+│   │   └── test_pipelines.py
+│   │
+│   ├── integration/
+│   │   ├── __init__.py
+│   │   └── test_postgres_integration.py # Teste de integração com PostgreSQL (Docker)
+│   │
 │   └── kedro_settings/
 │       ├── __init__.py
-│       ├── test_hooks.py           # Testes do hooks Kedro
-│       └── test_settings.py        # Testes das configurações do Kedro
+│       ├── test_hooks.py                 # Testes do hooks Kedro
+│       └── test_settings.py              # Testes das configurações do Kedro
 │
 ├── .dockerignore
 ├── .gitignore
-├── docker-compose.yml       # Infraestrutura (Postgres + Ollama + Streamlit)
-├── pyproject.toml           # Configuração Central (UV, Ruff, Ty, Pytest)
-├── README.md                # Documentação Principal
-└── uv.lock                  # Lockfile do UV (garantia de reprodutibilidade)
+├── docker-compose.yml                    # Infraestrutura (Postgres + PgAdmin)
+├── pyproject.toml                        # Configuração Central (UV, Ruff, Ty, Pytest)
+├── README.md                             # Documentação Principal
+└── uv.lock                               # Lockfile do UV
 ```
 
 ## Como Executar
@@ -123,7 +127,7 @@ Este planejamento foca nas entregas lógicas, sem datas fixas.
 
 - [X] Configurar repositório Git com `.gitignore` e `pyproject.toml`.
 - [X] Criar `docker-compose.yml` com PostgreSQL (imagem `pgvector/pgvector`).
-- [ ] Validar conexão local com o Banco de Dados.
+- [X] Validar conexão local com o Banco de Dados.
 - [ ] Baixar e testar modelo de embedding.
 - [ ] Baixar e testar modelos locais (Pull do DeepSeek no Ollama).
 
@@ -158,7 +162,8 @@ Este planejamento foca nas entregas lógicas, sem datas fixas.
 
 ### Fase 5: Observabilidade e Qualidade
 
-- [ ] Configurar `conf/base/logging.yml` para salvar logs em arquivo.
-- [ ] Configurar Hooks do Kedro para logging.
+- [X] Configurar `conf/base/logging.yml` para salvar logs em arquivo.
+- [X] Configurar Hooks do Kedro para logging.
+- [X] Criar testes unitários para testar hooks.py e settings.py
 - [ ] Escrever testes unitários para os Nodes principais (mockando BigQuery e Ollama).
 - [ ] Configurar pipeline de CI (GitHub Actions) para rodar `ruff`, `ty` e `pytest`.

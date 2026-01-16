@@ -1,0 +1,4 @@
+# Configurações de Monitoramento de Recursos
+monitoring:
+  memory_alert_threshold_mb: 1000
+  enable_alerts: true
