@@ -16,7 +16,9 @@ dynamic = [
     "version",
 ]
 dependencies = [
+    "google>=3.0.0",
     "google-cloud-bigquery>=3.40.0",
+    "google-cloud-bigquery-storage>=2.36.0",
     "kedro>=1.1.1",
     "kedro-datasets>=9.1.1",
     "kedro-viz>=12.2.0",
@@ -28,6 +30,7 @@ dependencies = [
     "pyarrow>=22.0.0",
     "pyyaml>=6.0.3",
     "sentence-transformers>=5.2.0",
+    "sqlalchemy>=2.0.45",
     "streamlit>=1.53.0",
 ]
 
@@ -167,3 +170,6 @@ exclude_lines = [
 [tool.coverage.html]
 directory = "htmlcov"
 title = "Coverage Report - Ecommerce MLOps & GenAI Pipeline"
+
+[tool.kedro_telemetry]
+project_id = "a9b8b17511f441f3a9f2c31d2d807a84"

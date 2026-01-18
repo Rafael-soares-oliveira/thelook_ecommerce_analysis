@@ -54,7 +54,7 @@ def test_before_pipeline_run_loads_parameters(
     mock_params = {"monitoring": {"memory_alert_threshold_mb": 500}}
     cast("MagicMock", mock_catalog.load).return_value = mock_params
 
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO, logger="thelook_ecommerce_analysis.hooks"):
         hook.before_pipeline_run(
             run_params={"pipeline_name": "test_pipe"},
             pipeline=mock_pipeline,
@@ -77,7 +77,7 @@ def test_before_pipeline_run_handles_missing_params(
     # Simula erro ao carregar parâmetros
     cast("MagicMock", mock_catalog.load).side_effect = Exception("Dataset not found")
 
-    with caplog.at_level(logging.WARNING):
+    with caplog.at_level(logging.WARNING, logger="thelook_ecommerce_analysis.hooks"):
         hook.before_pipeline_run({}, mock_pipeline, mock_catalog)
 
     # Verificações
@@ -105,7 +105,7 @@ def test_node_execution_logging_normal(
     ]
 
     # Execução
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO, logger="thelook_ecommerce_analysis.hooks"):
         hook.before_node_run(mock_node)
         hook.after_node_run(mock_node, {}, {})
 
@@ -141,7 +141,7 @@ def test_node_execution_logging_high_memory(
     ]
 
     # Execução
-    with caplog.at_level(logging.INFO):
+    with caplog.at_level(logging.INFO, logger="thelook_ecommerce_analysis.hooks"):
         hook.before_node_run(mock_node)
         hook.after_node_run(mock_node, {}, {})
 
@@ -163,7 +163,7 @@ def test_on_pipeline_error_logs_details(
     # Simula início para setar o start_time
     hook.before_pipeline_run({}, mock_pipeline, mock_catalog)
 
-    with caplog.at_level(logging.ERROR):
+    with caplog.at_level(logging.ERROR, logger="thelook_ecommerce_analysis.hooks"):
         hook.on_pipeline_error(
             ValueError("Erro simulado"), {}, mock_pipeline, mock_catalog
         )

@@ -1,4 +1,22 @@
-# Here you can define all your datasets by using simple YAML syntax.
-#
-# Documentation for this file format can be found in "The Data Catalog"
-# Link: https://docs.kedro.org/en/stable/data/data_catalog.html
+# Anchor do LazyPolarsDataset
+_parquet_settings: &parquet_settings
+  type: polars.LazyPolarsDataset
+  file_format: parquet
+  save_args:
+    compression: zstd
+
+# 1. Camada Raw
+"{namespace}_raw_{table}":
+  <<: *parquet_settings
+  filepath: data/01_raw/{table}.parquet
+  metadata:
+    kedro-viz:
+      layer: Raw
+
+# 2. Camada Intermediate
+"{namespace}_intermediate_{table}":
+  <<: *parquet_settings
+  filepath: data/02_intermediate/{table}.parquet
+  metadata:
+    kedro-viz:
+      layer: Intermediate

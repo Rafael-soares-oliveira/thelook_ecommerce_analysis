@@ -2,3 +2,20 @@
 monitoring:
   memory_alert_threshold_mb: 1000
   enable_alerts: true
+
+ingestion:
+  gcp_service_account: conf/local/gcp_key.json
+  start_date: 2026-01-01
+  safety_limit: 100_000
+  # Grupo 1: Tabelas Incrementais (Exigem date_col)
+  incremental_tables:
+    orders: created_at
+    users: created_at
+    events: created_at
+    inventory_items: created_at
+    order_items: created_at
+
+  # Grupo 2: Tabelas Snapshot/Full Load (Não usam data)
+  snapshot_tables:
+    - products
+    - distribution_centers
