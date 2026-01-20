@@ -47,7 +47,7 @@ def create_pipeline(**kwargs) -> Pipeline:
                 func=create_node_func(extract_snapshot_data, table_name=table),
                 inputs={
                     "key_filepath": "params:ingestion.gcp_service_account",
-                    "safety_lmit": "params:ingestion.safety_limit",
+                    "safety_limit": "params:ingestion.safety_limit",
                 },
                 outputs=f"ingestion_raw_{table}",
                 name=f"extract_{table}_node",

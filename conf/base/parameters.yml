@@ -19,3 +19,98 @@ ingestion:
   snapshot_tables:
     - products
     - distribution_centers
+
+processing:
+  enforce_schema: true
+  deduplicate: true
+
+  # Mapeamento de Tipos
+  schemas:
+    orders:
+      order_id: UInt32
+      user_id: UInt32
+      status: Categorical
+      gender: Categorical
+      created_at: Datetime
+      returned_at: Datetime
+      shipped_at: Datetime
+      delivered_at: Datetime
+      num_of_item: UInt8 # Ou UInt16 para garantir ou UInt32 para manter um padrão
+
+    order_items:
+      id: UInt32
+      order_id: UInt32
+      user_id: UInt32
+      product_id: UInt32
+      inventory_item_id: UInt32
+      status: Categorical
+      created_at: Datetime
+      shipped_at: Datetime
+      delivered_at: Datetime
+      returned_at: Datetime
+      sale_price: Decimal(10, 2)
+
+    inventory_items:
+      id: UInt32
+      product_id: UInt32
+      created_at: Datetime
+      sold_at: Datetime
+      cost: Decimal(10, 2)
+      product_category: Categorical
+      product_name: String
+      product_brand: String
+      product_retail_price: Decimal(10, 2)
+      product_department: Categorical
+      product_sku: String # No PostgreSQL utilizamos UUID
+      product_distribution_center_id: UInt8 # OU UInt32 para manter padrão
+
+    events:
+      id: UInt32
+      user_id: UInt32
+      sequence_number: UInt8
+      session_id: String # No PostgreSQL utilizamos UUID
+      created_at: Datetime
+      ip_address: String
+      city: String
+      state: String
+      postal_code: String
+      browser: Categorical
+      traffic_source: Categorical
+      uri: String
+      event_type: Categorical
+
+    distribution_centers:
+      id: UInt8 # Ou UInt32 para manter padrão
+      name: String
+      latitude: Float64
+      longitude: Float64
+      distribution_center_geom: String # No PostgreSQL consideramos como GEOGRAPHY
+
+    products:
+      id: UInt32
+      cost: Decimal(10, 2)
+      category: Categorical
+      name: String
+      brand: String
+      retail_price: Decimal(10, 2)
+      department: Categorical
+      sku: String # No PostgreSQL utilizamos UUID
+      distribution_center_id: UInt8
+
+    users:
+      id: UInt32
+      first_name: String
+      last_name: String
+      email: String # No PostgreSQL podemos continuar com TEXT ou CITEXT
+      age: UInt8
+      gender: Categorical
+      state: String
+      street_address: String
+      postal_code: String
+      city: String
+      country: Categorical
+      latitude: Float64
+      longitude: Float64
+      traffic_source: Categorical
+      created_at: Datetime
+      user_geom: String # No PostgreSQL consideramos como GEOGRAPHY
