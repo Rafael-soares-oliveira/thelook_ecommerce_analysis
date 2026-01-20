@@ -11,21 +11,30 @@ Este projeto implementa um pipeline completo de Engenharia de Dados e Inteligên
 
 ## Destaque da Implementação Atual
 
-* **Ingestão de Alta Performance**: Utiliza a **BigQuery Storage API** (via `google-cloud-bigquery-storage`) para baixar dados via stream binário (**Arrow**) diretamente para o Polars, reduzindo o tempo de IO em ~50%.
-* **Segurança Ativa**: Camada de ingestão blindada contra **SQL Injection**.
-  * Sanitização de identificadores via Regex (**Allowlist**).
-  * Uso estrito de parâmetros de query (`@start_date`) para valores.
-* **Engenharia Defensiva**:
-  * Verificação de volume (`COUNT`) antes do download de tabelas Snapshot (Fail Fast).
-  * Conversão automática defensiva de tipos (Series -> DataFrame).
-* **Qualidade de Código**: ~92% de cobertura de testes na camada de ingestão e hooks.
+### Ingestão (Raw)
+
+* **Performance**: Uso da **BigQuery Storage API** (stream Arrow) reduzindo IO em 50%.
+* **Segurança**: Blindagem contra SQL Injection via sanitização de identificadores e parametrização.
+* **Fail Fast**: Verificação de volume (`COUNT`) antes de downloads snapshot.
+
+### Processamento (Intermediate)
+
+* **Metadata Driven Transformation**: Lógica de limpeza 100% controlada via `parameters.yml`. O código é genérico, as regras são configuráveis.
+* **Tipagem Estrita & Financeira**:
+  * Suporte a tipos complexos como `Decimal(P, S)` para precisão monetária, evitando erros de ponto flutuante.
+  * Otimização de memória com conversão automática para `Categorical`.
+* **Resiliência**:
+  * **Schema Check**: O pipeline aborta imediatamente se uma coluna esperada não existir a origem.
+  * **Deduplicação**: Remove duplicatas baseadas em ID (se existir) ou na linha completa.
+* **Lazy Execution**: Utiliza `polars.LazyFrame` para otimização de plano de execução, só materializando dados na escrita.
 
 ## Arquitetura
 
 O sistema segue o padrão **Lakehouse** com enriquecimento semântico:
 
-1. **Ingestão**: Extração incremental do BigQuery (`thelook_ecommerce`).
-2. **Processamento**: Limpeza e modelagem de dados usando **Polars** (Lazy Execution).
+1. **Ingestion**: Extração incremental do BigQuery (`thelook_ecommerce`).
+2. **Processing**: Limpeza e modelagem de dados usando **Polars** (Lazy Execution).
+3. **Loading**: Injestão dos dados no PostgreSQL.
 3. **Vector Store**: Armazenamento de embeddings de produtos no **PostgreSQL (pgvector)**.
 4. **AI Enrichment**: Geração de resumos diários usando **DeepSeek (via Ollama)**.
 5. **Viz**: Dashboard interativo em **Streamlit** com Chatbot RAG.
@@ -133,9 +142,11 @@ Este planejamento foca nas entregas lógicas, sem datas fixas.
 - [X] Implementar **Pipeline de Ingestão**:
   - [X] Conector BigQuery.
   - [X] Lógica de Watermark (Incremental Load) lendo do Postgres.
-- [ ] Implementar **Pipeline de Transformação**:
-  - [ ] Limpeza com Polars (Lazy).
+- [X] Implementar **Pipeline de Transformação**:
+  - [X] Limpeza com Polars (Lazy).
+- [ ] Implementar **Pipeline de Carga**:
   - [ ] Criação de tabelas Fato/Dimensão.
+  - [ ] Realizar carga dos dados de modo incremental, caso já exista as tabelas.
 
 ### Fase 3: AI & Vetores
 
@@ -159,7 +170,8 @@ Este planejamento foca nas entregas lógicas, sem datas fixas.
 - [X] Configurar `conf/base/logging.yml` e configurar Hooks do Kedro.
 - [X] Criar testes unitários para testar hooks.py e settings.py
 - [X] Criar testes para pipeline Data Ingestion.
-- [ ] Criar testes para pipeline Processamento.
+- [X] Criar testes para pipeline Data Processing.
+- [ ] Criar testes para pipeline Data Loading.
 - [ ] Criar testes para pipeline Vector Store.
 - [ ] Criar testes para pipeline AI Enrichment.
 - [ ] Escrever testes unitários para os Nodes principais (mockando BigQuery e Ollama).

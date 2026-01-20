@@ -32,7 +32,9 @@ O catálogo de dados utiliza recursos avançados do Kedro e Polars para garantir
 
 Contém os parâmetros que controlam a lógica de negócio e a construção dinâmica do pipeline (Pipeline Factory).
 
-### Estrutura:
+### Ingestion
+
+Controla a extração do BigQuery.
 
 * **monitoring**: Define os limites para alertar de uso de memória RAM nos Hooks.
 * **ingestion**: Controla a extração do BigQuery.
@@ -41,6 +43,30 @@ Contém os parâmetros que controlam a lógica de negócio e a construção din�
   * **safety_limit**: Quantidade máxima de linhas esperada para tabelas **snapshot**.
   * **incremental_tables**: Dicionário `tabela: coluna_data`. O pipeline usa isso para gerar queries com filtros temporais (`WHERE data >= start_date`).
   * **snapshot_tables**: Lista de tabelas dimensionais (**full_load**). O pipeline adiciona automaticamente uma verificação de segurança (`COUNT`) antes de baixar.
+
+### Processing
+
+Define as regras de transformação da camada Raw para Intermediate.
+
+* **schemas**: Contrato de dados. Define quais colunas manter e qual tipo aplicar.
+  * **Tipo Suportado**:
+    * Primitivos: `UInt32`, `UInt64`, `Float64`, `String`, `Boolean`, `Date`.
+    * Otimizados: `Categorical` (para colunas com baixa cardinalidade).
+    * Financeiros: `Decimal(P, S)`.
+  * **Comportamento**:
+    * Se uma coluna listada aqui não existir na tabela Raw_*, o pipeline falha.
+    * Colunas na tabela Raw que não estão listadas aqui são descartadas.
+
+**Exemplo**:
+```YAML
+processing:
+  schemas:
+    products:
+      id: UInt32
+      category: Categorical
+      cost: Decimal(10, 2)
+      name: String
+```
 
 ## 4. local/credentials.yml
 
